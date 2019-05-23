@@ -1,0 +1,98 @@
+﻿<!DOCTYPE html>
+<html>
+	<head>
+		<title>卫宁健康软件项目实施管理平台</title>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<link href="static/js/jquery-ui-1.12.1/jquery-ui.min.css" rel="stylesheet" type="text/css" />
+		<link href="static/css/style.css" rel="stylesheet" type="text/css" />
+		<link href="static/css/common.css" rel="stylesheet" type="text/css" />
+		<link href="static/css/jquery_page.css" rel="stylesheet" type="text/css" />
+		<link href="static/js/msgbox/msgbox.css" rel="stylesheet" type="text/css" />
+		<!-- 引入jQuery -->
+		<script src="static/js/jquery-1.9.1.min.js" type="text/javascript"></script>
+		<script src="static/js/jquery-ui-1.12.1/jquery-ui.js" type="text/javascript"></script>
+		<!-- 引入前台分页插件 -->
+		<script src="static/js/jquery.myPagination6.0.js" type="text/javascript"></script>
+		<script src="static/js/msgbox/msgbox.js" type="text/javascript"></script>
+		<script src="static/js/utils.js" type="text/javascript"></script>
+	</head>
+
+	<body style="background-color:#1c77ac; background-image:url(static/images/light.png); background-repeat:no-repeat; background-position:center top; overflow:hidden;">
+		<div class="logintop">    
+		    <span>欢迎登录卫宁健康软件项目实施管理平台</span>
+	    </div>
+	    <div class="loginbody">
+		    <div class="loginbox">
+			    <form id="form1" name="form1" autocomplete="off">
+				    <ul>
+					    <li class="loginuser-li">
+					    	<input id="userId" placeholder="用户编号" name="userId" type="text" class="loginuser" value="" onkeyup="value=value.replace(/[^\w\.\/]/ig,'')" maxlength="30" />
+					    </li>
+					    <li class="loginpwd-li">
+					    	<input id="pass" name="pass" placeholder="密码" type="password" class="loginpwd" value="" maxlength="30" />
+					    </li>
+					     <li id="show" class="verifyCode-li">
+					    	<input id="verificationCode" placeholder="验证码" name="verificationCode" type="text" class="verifyCode" value="" maxlength="30" />
+					    	<a href="javascript:void(0);" onclick="changeImage();">
+					    		<img id="codeImage" title="看不清，换一张" alt="验证码" src="#" style="float:left;" height="48px" width="128px" />
+					        </a>
+					    	<div style="clear: both;"></div>
+					    </li> 
+					    <li><input id="loginButton" name="loginButton" type="button" class="loginbtn" value="登录"/>
+					    <label><a id="forgetpass" href="javascript:void(0);"></a></label></li>
+				    </ul>
+			    </form>
+		    </div>
+	    </div>
+
+		<script type="text/javascript">
+			$(function(){
+		    	$('.loginbox').css({'position':'absolute','left':($(window).width()-692)/2});
+			 	$(window).resize(function(){  
+		    		$('.loginbox').css({'position':'absolute','left':($(window).width()-692)/2});
+		    	});  
+				$("#show").hide();
+				//回车
+				$(document).keyup(function(event){
+					  if(event.keyCode ==13){
+						  $("#loginButton").trigger("click");
+					  }
+				});
+				$("#loginButton").click(function(){
+					var jsonData = {};
+					jsonData["userId"] = $("#userId").val();
+					jsonData["pass"] = $("#pass").val();
+					jsonData["verificationCode"] = $("#verificationCode").val();
+					$.post("userLogin.htm",jsonData,function(d){
+						if(d.code == 0){
+							location.href ="index.html";
+						}else{
+							changeImage();
+							errorMsgbox(d.desc);
+							return false; 
+						}
+					});
+				});
+			
+				//tryLogin();
+				//login();
+				needShowGerCode();
+			}); 
+			
+			//刷新验证码
+			function changeImage(){
+				$("#show").show();
+				$("#codeImage").attr("src",ctxPath+"/gercode.htm?r=" + Math.random());
+			}
+			
+			function needShowGerCode(){
+				$geta("/needShowGenCode.htm",function(d){
+					if(d == true){
+						changeImage();
+					}
+				});
+			}
+		</script>
+	</body>
+
+</html>

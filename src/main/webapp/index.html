@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html style="overflow-y:hidden;">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>卫宁健康软件项目实施管理平台</title>
+    <link href="static/js/jquery-ui-1.12.1/jquery-ui.min.css" rel="stylesheet" type="text/css"/>
+    <link href="static/css/style.css" rel="stylesheet" type="text/css"/>
+    <link href="static/css/common.css" rel="stylesheet" type="text/css"/>
+    <style type="text/css">
+        body {
+            margin: 0px;
+        }
+
+        iframe {
+            border: none;
+        }
+
+        .top-iframe {
+            width: 100%;
+            height: 88px;
+        }
+
+        .middle {
+            overflow-y: hidden;
+            position: absolute;
+            width: 100%;
+            height: auto;
+            top: 88px;
+            bottom: 20px;
+        }
+
+        .left-iframe {
+            height: 589px;
+            width: 187px;
+        }
+
+        .footer-iframe {
+            width: 100%;
+            position: absolute;
+            bottom: 0;
+        }
+    </style>
+    <!-- 引入jQuery -->
+    <script src="static/js/jquery-1.9.1.min.js" type="text/javascript"></script>
+    <script src="static/js/jquery-ui-1.12.1/jquery-ui.js" type="text/javascript"></script>
+    <!-- 引入前台分页插件 -->
+    <script src="static/js/utils.js" type="text/javascript"></script>
+</head>
+<body>
+<div>
+    <div style="height: 88px;">
+        <div style="background: url(static/images/topbg.gif) repeat-x; height: 88px">
+            <div class="topleft">
+                <!--<img src="static/images/login.png" title="系统首页" />-->
+            </div>
+            <div class="topright">
+                <ul>
+                    <li><a href="javascript:void(0);" onclick="showDialog();" target="rightFrame">修改密码</a></li>
+                    <li><a id="exit" title="退出" href="javascript:void(0);">退出</a></li>
+                </ul>
+                <div class="user">
+                    <span id="userName"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="middle">
+        <div style="float: left;">
+            <div style="background: #f0f9fd; overflow-x: hidden;"></div>
+            <dl id="dlMenu" class="leftmenu">
+                <!-- 显示一级菜单 -->
+                <dd class="W0000001">
+                    <div class="title">
+                        <span><img src="static/images/leftico01.png"></span>用户管理
+                    </div>
+                    <ul id="menu_info" class="menuson">
+                        <li class="00100010"><cite></cite><a
+                                href="/manager/user.html" target="rightFrame">用户管理</a><i></i></li>
+                    </ul>
+                </dd>
+                <dd class="W0000001">
+                    <div class="title">
+                        <span><img src="static/images/leftico01.png"></span>流程管理
+                    </div>
+                    <ul class="menuson">
+                        <li class="00100010"><cite></cite><a
+                                href="/manager/process.html" target="rightFrame">流程管理</a><i></i></li>
+                    </ul>
+                </dd>
+                <dd class="W0000001">
+                    <div class="title">
+                        <span><img src="static/images/leftico01.png"></span>任务管理
+                    </div>
+                    <ul class="menuson">
+                        <li class="00100010"><cite></cite><a
+                                href="/manager/task.html" target="rightFrame">任务管理</a><i></i></li>
+                        <li class="00100010"><cite></cite><a
+                                href="/manager/sum.html" target="rightFrame">统计查询</a><i></i></li>
+                        <li class="00100010"><cite></cite><a
+                                href="/manager/report.html" target="rightFrame">提问管理</a><i></i></li>
+                    </ul>
+                </dd>
+            </dl>
+        </div>
+        <div style="overflow: hidden;height: 100%;">
+            <iframe id="rightFrame" src="main.html" name="rightFrame" width="100%" height="100%"></iframe>
+        </div>
+    </div>
+</div>
+<div id="dialog" title="修改密码" style="display: none;">
+    <table id="form-data" class="formtable" border="">
+        <tr>
+            <td class="w75">用户名<span class="red">*</span></td>
+            <td class="w180"><span id="userID"></span></td>
+        </tr>
+        <tr>
+            <td class="w75">旧密码<span class="red">*</span></td>
+            <td class="w180"><input id="passwordOld" name="passwordOld" type="password" class="txt w150"
+                                    maxlength="20"/></td>
+        </tr>
+        <tr>
+            <td class="w75">新密码<span class="red">*</span></td>
+            <td class="w180"><input id="passwordNew" name="passwordNew" type="password" class="txt w150"
+                                    maxlength="20"/></td>
+        </tr>
+        <tr>
+            <td class="w75">确认密码<span class="red">*</span></td>
+            <td class="w180"><input id="passwordSure" name="passwordSure" type="password" class="txt w150"
+                                    maxlength="20"/></td>
+        </tr>
+    </table>
+</div>
+<script type="text/javascript">
+    var user;  //当前user用户
+
+    function showDialog() {
+        $("#userID").html(user.userName);
+        $("#dialog").dialog({
+            resizable: false,
+            height: "auto",
+            width: 400,
+            modal: true,
+            buttons: {
+                "保 存": function () {
+                    updateParam();
+                },
+                "关 闭": function () {
+                    $(this).dialog("close");
+                }
+            }
+        }).show();
+        $("#type").selectmenu({
+            width: 152
+        });
+    }
+
+    function updateParam() {
+        var param = {
+            "userID": $("#userID").text(),
+            "passwordOld": $.trim($("#passwordOld").val()),
+            "passwordNew": $.trim($("#passwordNew").val()),
+            "passwordSure": $.trim($("#passwordSure").val()),
+        };
+        if (!validateNotNull({
+            "旧密码不能为空": param.passwordOld,
+            "新密码不能为空": param.passwordNew,
+            "确认密码不能为空": param.passwordSure
+        })) {
+            return false;
+        }
+        var passCheck = /^[\w]{6,15}$/;
+        if (!passCheck.test(param.passwordNew)) {
+            errorMsgbox("用户密码长度在6-15之间，只能包含字母、数字和下划线！");
+            return false;
+        }
+        if (param.passwordSure != param.passwordNew) {
+            errorMsgbox("确认密码和新密码需一致！")
+            return false;
+        }
+
+        $get("/updatePassWord.htm", param, function (d) {
+            if (d.code == 0) {
+                $("#dialog").dialog("close");
+                msgbox("修改成功！");
+            } else {
+                errorMsgbox(d.desc);
+            }
+        });
+    }
+
+    function renderMenuLevel1() {
+        $get("/getMenuLevel1.htm", function (list) {
+            var dlMenu = $("#dlMenu");
+            for (var i in list) {
+                var item = list[i];
+                var dd = "<dd class=" + item.F_SHOW_ID + ">" +
+                    "<div class='title'>" +
+                    "<span><img src='static/images/leftico01.png' /></span>" + item.F_SHOW_NAME +
+                    "</div>" +
+                    "<ul class='menuson'></ul></dd>";
+                var test = "<dd class='test1'>" +
+                    "<div class='title'>" +
+                    "<span><img src='static/images/leftico01.png' /></span>test</div>" +
+                    "<ul class='menuson'></ul></dd>";
+                dlMenu.append($(dd));
+                dlMenu.append($(test));
+            }
+        });
+    }
+
+    function renderMenuLevel2(index, element) {
+        var menuId = $(element).attr("class"), $ul = $(element).find("ul");
+        $geta("/getMenuLevel2/" + menuId + ".htm", function (list) {
+            var len = list.length;
+            var li = '';
+            for (var i = 0; i < len; i++) {
+                var item = list[i],
+                    name = item.F_NODE_NAME,
+                    nodecode = item.F_NODE_CODE,
+                    link = ctxPath + item.F_NODE_DESC;
+                li += "<li class='" + nodecode + "'><cite></cite><a href='" + link + "' target='rightFrame'>"
+                    + name + "</a><i></i></li>";
+            }
+            li += "<li class='test2'><cite></cite><a href='/test' target='rightFrame'>test2</a><i></i></li>";
+            $ul.html(li);
+        });
+    }
+
+    $(function () {
+        tryLogout();
+
+        $.post("getUserInfo.htm", function (d) {
+            if (d.code != 0) {
+                msgbox(d.desc)
+            } else {
+                user = d.data;
+                $("#userName").html(user.userName);
+            }
+        });
+
+        $('.title').click(function () {
+            var $ul = $(this).next('ul');
+            $('dd').find('ul').slideUp();
+            if ($ul.is(':visible')) {
+                $(this).next('ul').slideUp();
+            } else {
+                $(this).next('ul').slideDown();
+            }
+        });
+
+        $("#dlMenu").on("click", "a", function (e) {
+            $("#dlMenu").find("li.active").removeClass("active");
+            $(this).parent().addClass("active");
+            tryLogout();
+        });
+
+        //退出
+        $("#exit").click(function () {
+            var check = confirm("您确定要退出系统吗？");
+            if (check) {
+                $geta("/userLogout.htm?r=" + Math.random(), function (d) {
+                    if (d.code == 0) {
+                        getRootParent().location.href = "login.html";
+                    }
+                });
+            }
+        });
+    });
+</script>
+</body>
+</html>
+

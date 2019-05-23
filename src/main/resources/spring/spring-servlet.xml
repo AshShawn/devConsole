@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:mvc="http://www.springframework.org/schema/mvc" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/aop   
+        http://www.springframework.org/schema/aop/spring-aop-3.0.xsd   
+        http://www.springframework.org/schema/beans   
+        http://www.springframework.org/schema/beans/spring-beans-3.0.xsd   
+        http://www.springframework.org/schema/context   
+        http://www.springframework.org/schema/context/spring-context-3.0.xsd   
+        http://www.springframework.org/schema/mvc   
+        http://www.springframework.org/schema/mvc/spring-mvc-3.1.xsd
+        http://www.springframework.org/schema/tx   
+        http://www.springframework.org/schema/tx/spring-tx-3.0.xsd">
+
+	<import resource="classpath:spring/spring-properties.xml"/>
+
+	<!-- spring容器启动时会扫描对应目录下的所有@controller -->
+	<context:component-scan
+		base-package="com.hll.test.controller" />
+
+	<mvc:annotation-driven>
+		<mvc:message-converters>
+			<bean
+				class="com.hll.test.common.MappingJSONHttpMessageConverter" />
+		</mvc:message-converters>
+	</mvc:annotation-driven>
+
+	<!-- mvc拦截器 -->
+	<mvc:interceptors>
+		<mvc:interceptor>
+			<!-- 需要拦截的 -->
+			<mvc:mapping path="/**" />
+			<bean
+				class="com.hll.test.common.UserLoginInterceptor">
+				<property name="uncheckUrls">
+					<set>
+						<value>${SERVER.CONTEXT_PATH}/exception.htm</value>
+						<value>${SERVER.CONTEXT_PATH}/userLogin.htm</value>
+						<value>${SERVER.CONTEXT_PATH}/isUserLogined.htm</value>
+						<value>${SERVER.CONTEXT_PATH}/needShowGenCode.htm</value>
+						<value>${SERVER.CONTEXT_PATH}/checkUpdate.htm</value>
+						<value>${SERVER.CONTEXT_PATH}/downloadClient.htm</value>
+						<value>${SERVER.CONTEXT_PATH}/checkBlackList.htm</value>
+						<value>${SERVER.CONTEXT_PATH}/loginReport.htm</value>
+						<value>${SERVER.CONTEXT_PATH}/logoutRed.htm</value>
+						<value>${SERVER.CONTEXT_PATH}/getBulletins.htm</value>
+						<value>${SERVER.CONTEXT_PATH}/getLoginState.htm</value>
+						<value>${SERVER.CONTEXT_PATH}/heartBeat.htm</value>
+						<value>${SERVER.CONTEXT_PATH}/gercode.htm</value>
+						<value>${SERVER.CONTEXT_PATH}/login/wechat_login.htm</value>
+						<value>${SERVER.CONTEXT_PATH}/login/empl_login.htm</value>
+						<value>${SERVER.CONTEXT_PATH}/getVerificationCode.htm</value>
+					</set>
+				</property>
+			</bean>
+		</mvc:interceptor>
+	</mvc:interceptors>
+
+	<bean
+		class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<property name="suffix" value="" />
+	</bean>
+
+	<!-- 异常集中处理配置 -->
+	<bean id="exceptionResolver"
+		class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">
+		<!-- 默认错误页面，就是不在exceptionMappings指定范围内 -->
+		<property name="defaultErrorView" value="/exception.htm" />
+		<property name="defaultStatusCode" value="500"></property>
+		<!-- 定义需要特殊处理的异常，用类名或完全路径名作为key，异常页名作为值 -->
+		<property name="exceptionMappings">
+			<props>
+			</props>
+		</property>
+	</bean>
+
+</beans>
