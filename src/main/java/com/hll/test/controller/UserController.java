@@ -65,22 +65,22 @@ public class UserController {
 
     @RequestMapping("/getUserInfoPage")
     @ResponseBody
-    public Response getOperatorInfoPage(int page, HttpServletRequest req) {
+    public Response getUserInfoPage(int page, HttpServletRequest req) {
         UserInfo info = SessionUtil.getUserinfo(req);
         if (info.getIsLeader() != 1) {
             return Response.NO_PERMISSION;
         }
-
+        Integer roleID = info.getRoleID();
         Page p = new Page(page);
         Map<String, Object> map = new HashMap<>();
         map.put(Page.KEY, p);
-        if (info.getRoleID() == 3) {
+        if (roleID == 3) {
             map.put("roleID", "");
         } else {
-            map.put("roleID", info.getRoleID());
+            map.put("roleID", roleID);
         }
         Util.removeNullEntry(map);
-        List data = userInfoMapper.getUserByRoleID(map);
+        List data = userInfoMapper.getUserByRoleID_page(map);
         return new PageRes(p.getTotalPage(), data);
     }
 
@@ -130,7 +130,12 @@ public class UserController {
 
     @RequestMapping("/updateUserInfo")
     @ResponseBody
-    public Response updateOperatorInfo(UserInfo info) {
+    public Response updateOperatorInfo(HttpServletRequest req, UserInfo info) {
+        UserInfo userinfo = SessionUtil.getUserinfo(req);
+        Integer roleID = userinfo.getRoleID();
+        if (roleID != 3) {
+            return Response.NO_PERMISSION;
+        }
         if (info == null) {
             return Response.LACK_OF_PARAM;
         }
@@ -140,7 +145,12 @@ public class UserController {
 
     @RequestMapping("/deleteUserInfo")
     @ResponseBody
-    public Response updateOperatorInfo(Integer userID) {
+    public Response updateOperatorInfo(HttpServletRequest request, Integer userID) {
+        UserInfo userinfo = SessionUtil.getUserinfo(request);
+        Integer roleID = userinfo.getRoleID();
+        if (roleID != 3) {
+            return Response.NO_PERMISSION;
+        }
         if (userID == null) {
             return Response.LACK_OF_PARAM;
         }

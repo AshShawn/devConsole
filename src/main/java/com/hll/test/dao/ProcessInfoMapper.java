@@ -54,5 +54,5 @@ public interface ProcessInfoMapper {
      */
     int updateByPrimaryKey(ProcessInfo record);
 
-    List<Map<String,Object>> selectAllPage(Map<String, Object> map);
+    List<Map<String,Object>> selectAll_page(Map<String, Object> map);
 }

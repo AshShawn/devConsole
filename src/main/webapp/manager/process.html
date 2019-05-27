@@ -105,18 +105,6 @@
                 </select>
             </td>
         </tr>
-        <tr>
-            <td class="w80">创始人编号<span class="red">*</span></td>
-            <td class="w180">
-                <input id="createUserID" type="text" class="txt w150" maxlength="30" hint="none"/>
-            </td>
-        </tr>
-        <tr>
-            <td class="w80">文件地址<span class="red">*</span></td>
-            <td class="w180">
-                <input id="fileUrl" type="text" class="txt w150" maxlength="30" hint="none"/>
-            </td>
-        </tr>
     </table>
 </div>
 <div id="delete-confirm" title="删除" style="display: none;">
@@ -128,7 +116,10 @@
         var mode;
         var tableOperClick = {
             "edit": function (id) {
-                $("#userID").attr("disabled", true);
+                $("#processID").attr("disabled", true);
+                $("#devTaskID").parent().parent().removeAttr("style");
+                $("#testTaskID").parent().parent().removeAttr("style");
+                $("#testUserID").parent().parent().removeAttr("style");
                 var item = D[id];
                 setInputValues("dialog", item);
                 showDialog("edit");
@@ -252,6 +243,9 @@
             //新增用户
             $("#btn_add").click(function () {
                 $("#processID").removeAttr("disabled");
+                $("#devTaskID").parent().parent().css("display", "none");
+                $("#testTaskID").parent().parent().css("display", "none");
+                $("#testUserID").parent().parent().css("display", "none");
                 setInputValues("dialog", {"operator_status": 1});
                 showDialog("add");
             })

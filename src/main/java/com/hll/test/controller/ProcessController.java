@@ -47,14 +47,19 @@ public class ProcessController {
             map.put("roleID", info.getRoleID());
         }
         Util.removeNullEntry(map);
-        List data = processInfoMapper.selectAllPage(map);
+        List data = processInfoMapper.selectAll_page(map);
         return new PageRes(p.getTotalPage(), data);
     }
 
 
     @RequestMapping("/updateProcessInfo")
     @ResponseBody
-    public Response updateOperatorInfo(ProcessInfo info) {
+    public Response updateOperatorInfo(ProcessInfo info,HttpServletRequest request) {
+        UserInfo userinfo = SessionUtil.getUserinfo(request);
+        Integer isLeader = userinfo.getIsLeader();
+        if (isLeader==0){
+            return Response.NO_PERMISSION;
+        }
         if (info == null) {
             return Response.LACK_OF_PARAM;
         }
@@ -64,7 +69,11 @@ public class ProcessController {
 
     @RequestMapping("/deleteProcessInfo")
     @ResponseBody
-    public Response updateOperatorInfo(Integer processID) {
+    public Response updateOperatorInfo(Integer processID,HttpServletRequest request) {
+        UserInfo userinfo = SessionUtil.getUserinfo(request);
+        if (userinfo.getRoleID()!=3){
+            return Response.NO_PERMISSION;
+        }
         if (processID == null) {
             return Response.LACK_OF_PARAM;
         }
@@ -79,12 +88,18 @@ public class ProcessController {
     @RequestMapping("/addProcessInfo")
     @ResponseBody
     public Response addOperatorInfo(ProcessInfo info, HttpServletRequest req) {
-        if (info == null) {
-            return Response.LACK_OF_PARAM;
-        }
         UserInfo currUser = SessionUtil.getUserinfo(req);
         if (currUser.getRoleID() != 0 && currUser.getRoleID() != 3) {
             return Response.NO_PERMISSION;
+        }
+        if (info == null) {
+            return Response.LACK_OF_PARAM;
+        }
+        if (info.getCurrentTaskType()!=0){
+            return Response.err("当前只能创建需求任务");
+        }
+        if (info.getDevUserID()==null){
+            return Response.err("必须指定开发人员");
         }
         info.setCreateUserID(currUser.getUserID());
         info.setCurrentTaskType(0);  //需求任务

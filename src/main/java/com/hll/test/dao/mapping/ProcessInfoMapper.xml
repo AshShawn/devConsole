@@ -34,7 +34,7 @@
         from processinfo
         where processID = #{processID,jdbcType=INTEGER}
     </select>
-    <select id="selectAllPage" resultType="java.util.Map">
+    <select id="selectAll_page" resultType="java.util.Map">
       select * from processinfo
     </select>
     <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">

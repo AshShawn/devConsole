@@ -2,7 +2,7 @@ package com.hll.test.common.page;
 
 public class Page{
     
-    public static int pageSize = 20;
+    public static int pageSize = 10;
     
 	public static final String KEY = "page";
 	private int showCount = 10; //每页显示记录数

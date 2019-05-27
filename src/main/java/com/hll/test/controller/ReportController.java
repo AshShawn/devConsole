@@ -38,7 +38,7 @@ public class ReportController {
         Map<String, Object> map = new HashMap<>();
         map.put(Page.KEY, p);
         Util.removeNullEntry(map);
-        List data = reportInfoMapper.selectAllPage(map);
+        List data = reportInfoMapper.selectAll_page(map);
         return new PageRes(p.getTotalPage(), data);
     }
 

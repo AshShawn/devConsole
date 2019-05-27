@@ -33,14 +33,10 @@
     <form id="queryForm" name="queryForm">
         <table class="formtable" border="">
             <tr>
-                <td>
-                    <!--                <td class="w40">订单编号</td>-->
-                    <!--                <td class="w120">-->
-                    <!--                    <input id="q_order_no" name="q_order_no" type="text" class="txt w150" maxlength="30"/>-->
-                    <!--                </td>-->
+                <td class="w40">任务编号</td>
+                <td class="w120">
+                    <input id="q_taskID" name="q_taskID" type="text" class="txt w120" maxlength="30"/>
                 </td>
-            </tr>
-            <tr>
                 <td>
                     <input id="btn_query" type="button" class="scbtn w100 h25" value="查&nbsp;&nbsp;&nbsp;&nbsp;询"/>
                     <input id="btn_add" type="button" class="scbtn w100 h25" value="新&nbsp;&nbsp;&nbsp;&nbsp;增"/>
@@ -65,8 +61,7 @@
             <td class="w80">任务类型<span class="red">*</span></td>
             <td class="w180">
                 <select id="taskType" class="sel w150">
-                    <option value="0" selected>需求</option>
-                    <option value="1">开发</option>
+                    <option value="1" selected>开发</option>
                     <option value="2">测试</option>
                     <option value="3">bug</option>
                 </select>

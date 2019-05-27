@@ -2,15 +2,14 @@ package com.hll.test.controller;/**
  * Create by sq598 on 2019/3/12
  */
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.lang.reflect.Array;
+import java.util.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
 import javafx.concurrent.Task;
+import org.apache.taglibs.standard.tag.el.core.IfTag;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -37,19 +36,48 @@ public class TaskController {
 
     @RequestMapping("/getTaskInfoPage")
     @ResponseBody
-    public Response getOperatorInfoPage(int page, HttpServletRequest req) {
-        UserInfo info = SessionUtil.getUserinfo(req);
+    public Response getTaskInfoPage(int page, HttpServletRequest req, String q_taskID) {
+        UserInfo userInfo = SessionUtil.getUserinfo(req);
+        Integer roleID = userInfo.getRoleID();
+        Integer userID = userInfo.getUserID();
         Page p = new Page(page);
         Map<String, Object> map = new HashMap<>();
-        map.put(Page.KEY, p);
+        if (!StringUtil.isNullOrBlank(q_taskID)) {
+            map.put("taskID", Integer.parseInt(q_taskID));
+        }
+        if (roleID == 3) {
+            map.put("userID", "");
+        } else {
+            map.put("userID", userID);
+        }
         Util.removeNullEntry(map);
-        List data = taskInfoMapper.selectAllPage(map);
+        map.put(Page.KEY, p);
+        List data = taskInfoMapper.selectAll_page(map);
+        Iterator iterator = data.iterator();
+        while (iterator.hasNext()) {
+            Object item = iterator.next();
+            Map<String, Object> map1 = (Map<String, Object>) item;
+            String s = (String) map1.get("workerIDs");
+            Integer leaderID = (Integer) map1.get("leaderID");
+            String[] split = s.split(",");
+            List<String> list = Arrays.asList(split);
+            if (list.contains(userID + "") || leaderID == userID) {
+                continue;
+            } else {
+                iterator.remove();
+            }
+        }
         return new PageRes(p.getTotalPage(), data);
     }
 
     @RequestMapping("/updateTaskInfo")
     @ResponseBody
-    public Response updateOperatorInfo(TaskInfo info) {
+    public Response updateTaskInfo(TaskInfo info, HttpServletRequest req) {
+        UserInfo userinfo = SessionUtil.getUserinfo(req);
+        Integer isLeader = userinfo.getIsLeader();
+        if (isLeader == 0 && info.getTaskState() == 4) {  //非组长无法关闭问题
+            return Response.NO_PERMISSION;
+        }
         if (info == null) {
             return Response.LACK_OF_PARAM;
         }
@@ -59,7 +87,23 @@ public class TaskController {
 
     @RequestMapping("/addTaskInfo")
     @ResponseBody
-    public Response addOperatorInfo(TaskInfo info, HttpServletRequest req) {
+    public Response addTaskInfo(TaskInfo info, HttpServletRequest req) {
+        UserInfo userinfo = SessionUtil.getUserinfo(req);
+        Integer roleID = userinfo.getRoleID();
+        Integer isLeader = userinfo.getIsLeader();
+        if (isLeader == 0 && roleID != 2) {  //不是组长且不是测试人员 无权限
+            return Response.NO_PERMISSION;
+        } else if (isLeader == 1 && roleID == 1) { //开发组长
+            info.setTaskType(1);
+        } else if (isLeader == 1 && roleID == 2) {  //测试组长
+            info.setTaskType(2);
+        } else if (isLeader == 0 && roleID == 3) {  //测试组员
+            info.setTaskType(3);
+        }
+        Integer taskState = info.getTaskState();
+        if (taskState != 0) {
+            Response.err("任务状态只能是已建议");
+        }
         if (info == null) {
             return Response.LACK_OF_PARAM;
         }
@@ -69,7 +113,12 @@ public class TaskController {
 
     @RequestMapping("/deleteTaskInfo")
     @ResponseBody
-    public Response deleteTaskInfo(Integer taskID) {
+    public Response deleteTaskInfo(Integer taskID, HttpServletRequest req) {
+        UserInfo userinfo = SessionUtil.getUserinfo(req);
+        Integer roleID = userinfo.getRoleID();
+        if (roleID != 3) {
+            return Response.NO_PERMISSION;
+        }
         if (taskID == null) {
             return Response.LACK_OF_PARAM;
         }

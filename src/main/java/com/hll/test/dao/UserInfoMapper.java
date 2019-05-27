@@ -58,5 +58,5 @@ public interface UserInfoMapper {
 
     int updatePwd(@Param("new_p") String new_p, @Param("old_p") String old_p, @Param("userID") Integer userID);
 
-    List<Map<String,Object>> getUserByRoleID(Map<String, Object> map);
+    List<Map<String,Object>> getUserByRoleID_page(Map<String, Object> map);
 }

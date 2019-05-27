@@ -228,8 +228,12 @@
 
             $("#btn_query1").click(function () {
                 var formData = $("#q_processID").val(); //序列化表单
-                var item = {"processID": formData}
+                var item = {"processID": formData};
                 createPage("/getSumInfoProcess.htm", item, function (d) {
+                    if (d.code!=0){
+                        errorMsgbox(d.desc);
+                        return;
+                    }
                     addColumn(d.data, "currentTaskType", "currentTaskType_desc", {
                         0: "需求",
                         1: "开发",

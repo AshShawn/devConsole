@@ -30,10 +30,10 @@
     where userID = #{userID,jdbcType=INTEGER}
   </select>
 
-  <select id="getUserByRoleID" resultType="java.util.Map">
+  <select id="getUserByRoleID_page" resultType="java.util.Map">
     select * from userinfo where 1=1
-    <if test="roleID!=null and roleID!=''">
-      roleID=#{roleID,jdbcType=INTEGER}
+    <if test="roleID!=null">
+     and roleID=#{roleID,jdbcType=INTEGER}
     </if>
 
   </select>
