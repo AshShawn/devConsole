@@ -53,6 +53,9 @@ public class TaskController {
         Util.removeNullEntry(map);
         map.put(Page.KEY, p);
         List data = taskInfoMapper.selectAll_page(map);
+        if (roleID == 3) {
+            return new PageRes(p.getTotalPage(), data);
+        }
         Iterator iterator = data.iterator();
         while (iterator.hasNext()) {
             Object item = iterator.next();
