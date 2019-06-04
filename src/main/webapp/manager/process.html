@@ -110,6 +110,18 @@
 <div id="delete-confirm" title="删除" style="display: none;">
     确认要删除[<span style="color: red;font-weight: bold;"></span>]吗?
 </div>
+<form id="upload" title="上传文件" method="post" enctype="multipart/form-data" style="display: none">
+    <tr>
+        <td class="w80">上传文件<span class="red">*</span></td>
+        <td class="w180">
+            <input type="file" name="file" id="file" class="txt w180" maxlength="30" hint="none">
+        </td>
+    </tr>
+</form>
+
+<form id="download" title="下载文件" style="display: block">
+    123
+</form>
 <script type="text/javascript">
     $(function () {
         var D;
@@ -141,7 +153,64 @@
                         });
                     },
                 });
+            },
+            "upload": function (id) {
+                dialog("upload", {
+                    "上传": function () {
+                        var item = new FormData();
+                        item.append('file', $('#file')[0].files[0]);
+                        item.append('processID', id);
+                        $.ajax({
+                            url: '/upload.htm',
+                            type: 'POST',
+                            cache: false,
+                            data: item,
+                            processData: false,
+                            contentType: false
+                        }).done(function (d) {
+                            if (d.code == 0) {
+                                $("#upload").dialog("close");
+                                msgbox("上传成功！");
+                                $("#btn_query").click()
+                            } else {
+                                $("#upload").dialog("close");
+                                errorMsgbox(d.desc)
+                            }
+                        }).fail(function (d) {
+                            alert("上传失败")
+                        });
+                    },
+                })
+            },
+            "download": function (id) {
+                $("#download").html("")
+                var processInfo = D[id]
+                var fileName = processInfo["fileUrl"];
+                var arr = fileName.split(";")
+                var s = ""
+                for (item of arr) {
+                    $("#download").append("<a href='/download.htm?filename=" + item + "'>" + item + "</a></br>")
+                }
+                dialog("download", {
+                    "全部下载": function () {
+                        var item = {"filenames": fileName};
+                        var form = $("<form>");
+                        form.attr("style", "display:none");
+                        form.attr("target", "");
+                        form.attr("method", "post");
+                        form.attr("action", "/download2.htm");
+                        var input1 = $("<input>");
+                        input1.attr("type", "hidden");
+                        input1.attr("name", "filenames");
+                        input1.attr("value", fileName);
+                        $("body").append(form);
+                        form.append(input1);
+                        form.submit();
+                        form.remove();
+                    }
+                })
             }
+
         }
 
         function showDialog(m) {
@@ -231,7 +300,9 @@
                         ],
                         [
                             "编辑:edit:tablelink",
-                            "删除:delete:tablelink"
+                            "删除:delete:tablelink",
+                            "上传:upload:tablelink",
+                            "下载:download:tablelink"
                         ],
                         tableOperClick,
                         d.data,

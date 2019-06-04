@@ -2,3 +2,5 @@
 /*.iml
 /logs
 /target
+/src/main/webapp/download
+/src/main/webapp/upload
