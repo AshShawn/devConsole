@@ -31,7 +31,7 @@ CREATE TABLE `processinfo`  (
   `isComplete` int(1) NOT NULL COMMENT '是否完成 0未完成 1完成',
   `createUserID` int(10) NOT NULL COMMENT '创始人id',
   `fileUrl` varchar(255) CHARACTER SET utf8 COLLATE utf8_bin NULL DEFAULT NULL COMMENT '文件地址(文件夹 流程id;文件 文件名+上传人id)',
-  PRIMARY KEY (`processID`) USING BTREE
+  PRIMARY KEY (`processID`)
 ) ENGINE = InnoDB AUTO_INCREMENT = 7 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
@@ -56,7 +56,7 @@ CREATE TABLE `reportinfo`  (
   `createUser` int(10) NOT NULL COMMENT '提问发起人',
   `answer` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '回答',
   `taskID` int(10) NOT NULL COMMENT '任务编号',
-  PRIMARY KEY (`reportID`) USING BTREE
+  PRIMARY KEY (`reportID`)
 ) ENGINE = InnoDB AUTO_INCREMENT = 5 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
@@ -80,7 +80,7 @@ CREATE TABLE `taskinfo`  (
   `taskState` int(1) NOT NULL COMMENT ' 任务状态(0 已建议 1活动的 2已解决 3已关闭)',
   `taskLevel` int(1) NOT NULL COMMENT '任务级别(0 轻 1中 2重)',
   `reportIDs` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '提问编号(用逗号隔开)',
-  PRIMARY KEY (`taskID`) USING BTREE
+  PRIMARY KEY (`taskID`)
 ) ENGINE = InnoDB AUTO_INCREMENT = 12 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
@@ -102,7 +102,7 @@ CREATE TABLE `userinfo`  (
   `isLeader` int(1) NOT NULL COMMENT '是否为领导 0不是 1是',
   `password` varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '密码 最多20位 md5加密',
   `userName` varchar(30) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '用户名,显示名称',
-  PRIMARY KEY (`userID`) USING BTREE
+  PRIMARY KEY (`userID`) 
 ) ENGINE = InnoDB AUTO_INCREMENT = 1000 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------

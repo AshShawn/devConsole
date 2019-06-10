@@ -10,8 +10,6 @@ import org.springframework.web.servlet.ModelAndView;
 
 
 public class UserLoginInterceptor implements HandlerInterceptor {
-
-
     private Set<String> uncheckUrls;
 
     @Override
@@ -32,19 +30,16 @@ public class UserLoginInterceptor implements HandlerInterceptor {
             return true;
         }
     }
-
     @Override
     public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler,
             ModelAndView modelAndView) throws Exception {
 
     }
-
     @Override
     public void afterCompletion(HttpServletRequest request, HttpServletResponse response,
             Object handler, Exception ex) throws Exception {
 
     }
-
     public Set<String> getUncheckUrls() {
         return uncheckUrls;
     }

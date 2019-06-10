@@ -49,7 +49,7 @@
     </div>
     <div id="paging" class="clearfix pb50"></div>
 </div>
-<div id="dialog" title="用户新增/修改" style="display: none;">
+<div id="dialog" title="任务新增/修改" style="display: none;">
     <table id="form-data" class="formtable" border="">
         <tr>
             <td class="w80">任务编号<span class="red">*</span></td>
@@ -182,27 +182,8 @@
                 }
             });
         }
-
-        // function createParkSel(id, res) {
-        //     var list = res.data;
-        //     var s = "<select id='" + id + "' name='" + id + "' class='sel w150'> value='" + list[0].park_id + "'";
-        //     for (var i in list) {
-        //         var it = list[i];
-        //         s += ("<option value='" + it["park_id"] + "'>" + it["park_name"] + "</option> ");
-        //     }
-        //     s += "</select>";
-        //     return s;
-        // }
-
         function init() {
-            if (parent.window.user.isLeader != 1) {
-                window.location.href = "about:blank";
-            }
-
-            // $get("/getUserSel.htm", function (list) {
-            //     $("#park_id_parent").append(createParkSel("park_id", list));
-            // });
-
+            //点击查询
             $("#btn_query").click(function () {
                 var formData = $("#queryForm").serialize(); //序列化表单
                 formData = decodeURIComponent(formData, true); //解码
@@ -248,7 +229,7 @@
                 });
             });
 
-            //新增用户
+            //新增任务
             $("#btn_add").click(function () {
                 $("#processID").removeAttr("disabled");
                 setInputValues("dialog", {"operator_status": 1});

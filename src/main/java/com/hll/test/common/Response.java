@@ -16,6 +16,7 @@ public class Response {
     public static final Response NO_RESULT=new Response(Code.NO_RESULT);
     public static final Response VERCODE_ERROR=new Response(Code.VERCODE_ERROR);
     public static final Response NO_PERMISSION=new Response(Code.NO_PERMISSION);
+   // public static final Response EXISTS=new Response(EXISTS);
 
     private static Logger logger= LoggerFactory.getLogger(Response.class);
 
@@ -27,6 +28,7 @@ public class Response {
     }
     
     public Response(Object data) {
+
         this.data = data;
     }
 

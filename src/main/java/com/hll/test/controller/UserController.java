@@ -1,6 +1,4 @@
-package com.hll.test.controller;/**
- * Create by sq598 on 2019/3/12
- */
+package com.hll.test.controller;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -74,7 +72,7 @@ public class UserController {
         Page p = new Page(page);
         Map<String, Object> map = new HashMap<>();
         map.put(Page.KEY, p);
-        if (roleID == 3) {
+        if (roleID == 3) {   //超管
             map.put("roleID", "");
         } else {
             map.put("roleID", roleID);
@@ -102,7 +100,8 @@ public class UserController {
 
     @RequestMapping("/userLogin")
     @ResponseBody
-    public Response useLogin(HttpSession session, HttpServletResponse res, String userId, String pass, String verificationCode) {
+    public Response useLogin(HttpSession session, HttpServletResponse res,HttpServletRequest req,
+                             String userId, String pass, String verificationCode) {
         if (StringUtil.isNullOrBlank(userId) || StringUtil.isNullOrBlank(pass)) {
             session.setAttribute(Keys.VERIFYCODE_KEY, "0");
             return Response.LACK_OF_PARAM;
@@ -110,10 +109,10 @@ public class UserController {
         //校核验证码
         if (session.getAttribute(Keys.VERIFYCODE_KEY) != null) {
             String code = SessionUtil.getCode(session);
-            if (!code.equalsIgnoreCase(verificationCode)) {
-                return Response.VERCODE_ERROR;
-            } else {
+            if (code.equalsIgnoreCase(verificationCode)) {
                 session.removeAttribute(Keys.VERIFYCODE_KEY);
+            } else {
+                return Response.VERCODE_ERROR;
             }
         }
         String md5Pass = Cryptos.getMd5_16(pass);
@@ -149,10 +148,10 @@ public class UserController {
         UserInfo userinfo = SessionUtil.getUserinfo(request);
         Integer roleID = userinfo.getRoleID();
         if (roleID != 3) {
-            return Response.NO_PERMISSION;
+            return Response.NO_PERMISSION;//不是超级管理员无权限删除用户信息
         }
         if (userID == null) {
-            return Response.LACK_OF_PARAM;
+            return Response.LACK_OF_PARAM;//缺少必填参数
         }
         int i = userInfoMapper.deleteByPrimaryKey(userID);
         if (i == 1) {
@@ -168,11 +167,15 @@ public class UserController {
         if (info == null) {
             return Response.LACK_OF_PARAM;
         }
-        UserInfo currUser = SessionUtil.getUserinfo(req);
-        if (currUser.getUserID() != 999) {
-            return Response.NO_PERMISSION;
+        UserInfo currUser = SessionUtil.getUserinfo(req); //获取当前用户
+        if (currUser.getRoleID() !=3) {
+            return Response.NO_PERMISSION;//无权限
         }
-        info.setPassword(Cryptos.getMd5_16("123456"));
+        if(userInfoMapper.selectByPrimaryKey(info.getUserID())!=null){
+            //不可以插入  前面已经有过了
+            return Response.err("用户id已存在");
+        }
+        info.setPassword(Cryptos.getMd5_16("123456"));//默认密码为123456
         userInfoMapper.insertSelective(info);
         return Response.SUCCESS;
     }

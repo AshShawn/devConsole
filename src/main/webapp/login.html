@@ -29,7 +29,7 @@
 					    	<input id="userId" placeholder="用户编号" name="userId" type="text" class="loginuser" value="" onkeyup="value=value.replace(/[^\w\.\/]/ig,'')" maxlength="30" />
 					    </li>
 					    <li class="loginpwd-li">
-					    	<input id="pass" name="pass" placeholder="密码" type="password" class="loginpwd" value="" maxlength="30" />
+					    	<input id="pass"  placeholder="密码" name="pass" type="password" class="loginpwd" value="" maxlength="30" />
 					    </li>
 					     <li id="show" class="verifyCode-li">
 					    	<input id="verificationCode" placeholder="验证码" name="verificationCode" type="text" class="verifyCode" value="" maxlength="30" />
@@ -51,18 +51,21 @@
 			 	$(window).resize(function(){  
 		    		$('.loginbox').css({'position':'absolute','left':($(window).width()-692)/2});
 		    	});  
-				$("#show").hide();
-				//回车
+				$("#show").hide();//隐藏验证码
+
 				$(document).keyup(function(event){
 					  if(event.keyCode ==13){
 						  $("#loginButton").trigger("click");
 					  }
-				});
+				});//支持回车提交
 				$("#loginButton").click(function(){
 					var jsonData = {};
 					jsonData["userId"] = $("#userId").val();
 					jsonData["pass"] = $("#pass").val();
 					jsonData["verificationCode"] = $("#verificationCode").val();
+
+					// https://localhost:8080/userLogin.htm
+
 					$.post("userLogin.htm",jsonData,function(d){
 						if(d.code == 0){
 							location.href ="index.html";

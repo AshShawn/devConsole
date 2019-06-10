@@ -45,10 +45,10 @@ public class TaskController {
         if (!StringUtil.isNullOrBlank(q_taskID)) {
             map.put("taskID", Integer.parseInt(q_taskID));
         }
-        if (roleID == 3) {
+        if (roleID == 3) {//管理员可以看到所有任务
             map.put("userID", "");
         } else {
-            map.put("userID", userID);
+            map.put("userID", userID+"");
         }
         Util.removeNullEntry(map);
         map.put(Page.KEY, p);
@@ -78,30 +78,40 @@ public class TaskController {
     public Response updateTaskInfo(TaskInfo info, HttpServletRequest req) {
         UserInfo userinfo = SessionUtil.getUserinfo(req);
         Integer isLeader = userinfo.getIsLeader();
-        if (isLeader == 0 && info.getTaskState() == 4) {  //非组长无法关闭问题
+        if (isLeader == 0 && info.getTaskState() ==  3) {  //非组长无法关闭问题
             return Response.NO_PERMISSION;
         }
         if (info == null) {
-            return Response.LACK_OF_PARAM;
+            return Response.LACK_OF_PARAM;//缺少必填参数
         }
-        taskInfoMapper.updateByPrimaryKeySelective(info);
+        TaskInfo taskInfo = taskInfoMapper.selectByPrimaryKey(info.getTaskID());//只能修改任务级别、员工编号和任务状态
+        Integer taskLevel = info.getTaskLevel();
+        String workerIDs = info.getWorkerIDs();
+        Integer taskState = info.getTaskState();
+        if (taskLevel==taskInfo.getTaskLevel()&&taskState== taskInfo.getTaskState()&&workerIDs.equalsIgnoreCase(taskInfo.getWorkerIDs())) {
+            return Response.err("修改无效或者没有权限");
+        }
+        taskInfo.setTaskLevel(taskLevel);
+        taskInfo.setWorkerIDs(workerIDs);
+        taskInfo.setTaskState(taskState);
+        taskInfoMapper.updateByPrimaryKeySelective(taskInfo);
         return Response.SUCCESS;
     }
 
     @RequestMapping("/addTaskInfo")
     @ResponseBody
     public Response addTaskInfo(TaskInfo info, HttpServletRequest req) {
-        UserInfo userinfo = SessionUtil.getUserinfo(req);
+        UserInfo userinfo = SessionUtil.getUserinfo(req); //获取当前登录对象
         Integer roleID = userinfo.getRoleID();
         Integer isLeader = userinfo.getIsLeader();
         if (isLeader == 0 && roleID != 2) {  //不是组长且不是测试人员 无权限
             return Response.NO_PERMISSION;
         } else if (isLeader == 1 && roleID == 1) { //开发组长
-            info.setTaskType(1);
+            info.setTaskType(1); //创建开发任务
         } else if (isLeader == 1 && roleID == 2) {  //测试组长
-            info.setTaskType(2);
+            info.setTaskType(2);//创建测试任务
         } else if (isLeader == 0 && roleID == 3) {  //测试组员
-            info.setTaskType(3);
+            info.setTaskType(3);//创建bug任务
         }
         Integer taskState = info.getTaskState();
         if (taskState != 0) {

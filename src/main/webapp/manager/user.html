@@ -90,7 +90,7 @@
         var mode;
         var tableOperClick = {
             "edit": function (id) {
-                $("#userID").attr("disabled", true);
+                $("#userID").attr("disabled", true);//
                 var item = D[id];
                 setInputValues("dialog", item);
                 showDialog("edit");
@@ -151,25 +151,12 @@
             });
         }
 
-        // function createParkSel(id, res) {
-        //     var list = res.data;
-        //     var s = "<select id='" + id + "' name='" + id + "' class='sel w150'> value='" + list[0].park_id + "'";
-        //     for (var i in list) {
-        //         var it = list[i];
-        //         s += ("<option value='" + it["park_id"] + "'>" + it["park_name"] + "</option> ");
-        //     }
-        //     s += "</select>";
-        //     return s;
-        // }
 
         function init() {
             if (parent.window.user.isLeader != 1) {
                 window.location.href = "about:blank";
             }
 
-            // $get("/getUserSel.htm", function (list) {
-            //     $("#park_id_parent").append(createParkSel("park_id", list));
-            // });
 
             $("#btn_query").click(function () {
                 var formData = $("#queryForm").serialize(); //序列化表单

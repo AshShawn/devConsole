@@ -48,15 +48,15 @@ public class ProcessController {
     public Response getOperatorInfoPage(int page, HttpServletRequest req) {
         UserInfo info = SessionUtil.getUserinfo(req);
         if (info.getIsLeader() != 1) {
-            return Response.NO_PERMISSION;
+            return Response.NO_PERMISSION;//不止组长和管理员无权限打开菜单
         }
         Page p = new Page(page);
         Map<String, Object> map = new HashMap<>();
         map.put(Page.KEY, p);
         if (info.getRoleID() == 3) {
-            map.put("roleID", "");
+            map.put("roleID", "");//管理员可以查看所有用户
         } else {
-            map.put("roleID", info.getRoleID());
+            map.put("roleID", info.getRoleID());//组长只能看到组员用户
         }
         Util.removeNullEntry(map);
         List data = processInfoMapper.selectAll_page(map);

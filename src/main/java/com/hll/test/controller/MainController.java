@@ -19,7 +19,7 @@ import com.hll.test.common.VCodeGenerator;
 @Controller
 public class MainController {
 
-    private Logger          logger = LoggerFactory.getLogger(getClass());
+    private Logger logger = LoggerFactory.getLogger(getClass());
 
     @RequestMapping("/exception")
     @ResponseBody
