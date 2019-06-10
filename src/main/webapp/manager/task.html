@@ -122,7 +122,7 @@
         var mode;
         var tableOperClick = {
             "edit": function (id) {
-                $("#userID").attr("disabled", true);
+                $("#taskID").attr("disabled", true);
                 var item = D[id];
                 setInputValues("dialog", item);
                 showDialog("edit");
@@ -231,7 +231,7 @@
 
             //新增任务
             $("#btn_add").click(function () {
-                $("#processID").removeAttr("disabled");
+                $("#taskID").removeAttr("disabled");
                 setInputValues("dialog", {"operator_status": 1});
                 showDialog("add");
             })
@@ -243,5 +243,4 @@
     });
 
 </script>
-
 </body>

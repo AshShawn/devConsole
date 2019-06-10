@@ -48,7 +48,7 @@ public class TaskController {
         if (roleID == 3) {//管理员可以看到所有任务
             map.put("userID", "");
         } else {
-            map.put("userID", userID+"");
+            map.put("userID", userID + "");
         }
         Util.removeNullEntry(map);
         map.put(Page.KEY, p);
@@ -78,7 +78,7 @@ public class TaskController {
     public Response updateTaskInfo(TaskInfo info, HttpServletRequest req) {
         UserInfo userinfo = SessionUtil.getUserinfo(req);
         Integer isLeader = userinfo.getIsLeader();
-        if (isLeader == 0 && info.getTaskState() ==  3) {  //非组长无法关闭问题
+        if (isLeader == 0 && info.getTaskState() == 3) {  //非组长无法关闭问题
             return Response.NO_PERMISSION;
         }
         if (info == null) {
@@ -88,7 +88,7 @@ public class TaskController {
         Integer taskLevel = info.getTaskLevel();
         String workerIDs = info.getWorkerIDs();
         Integer taskState = info.getTaskState();
-        if (taskLevel==taskInfo.getTaskLevel()&&taskState== taskInfo.getTaskState()&&workerIDs.equalsIgnoreCase(taskInfo.getWorkerIDs())) {
+        if (taskLevel == taskInfo.getTaskLevel() && taskState == taskInfo.getTaskState() && workerIDs.equalsIgnoreCase(taskInfo.getWorkerIDs())) {
             return Response.err("修改无效或者没有权限");
         }
         taskInfo.setTaskLevel(taskLevel);
@@ -104,6 +104,14 @@ public class TaskController {
         UserInfo userinfo = SessionUtil.getUserinfo(req); //获取当前登录对象
         Integer roleID = userinfo.getRoleID();
         Integer isLeader = userinfo.getIsLeader();
+        Integer taskID = info.getTaskID();
+        TaskInfo taskInfo = taskInfoMapper.selectByPrimaryKey(taskID);
+        if (taskInfo != null) {
+            return Response.err("id已存在");
+        }
+        if (roleID == 0) {  //需求人员
+            return Response.err("需求人员无法创建任务,请转至流程管理界面");
+        }
         if (isLeader == 0 && roleID != 2) {  //不是组长且不是测试人员 无权限
             return Response.NO_PERMISSION;
         } else if (isLeader == 1 && roleID == 1) { //开发组长

@@ -66,9 +66,13 @@ public class ReportController {
 
     @RequestMapping("/deleteReportInfo")
     @ResponseBody
-    public Response deleteTaskInfo(Integer reportID) {
+    public Response deleteTaskInfo(HttpServletRequest req, Integer reportID) {
         if (reportID == null) {
             return Response.LACK_OF_PARAM;
+        }
+        UserInfo userinfo = SessionUtil.getUserinfo(req);
+        if (userinfo.getRoleID() != 3) {
+            return Response.NO_PERMISSION;
         }
         int i = reportInfoMapper.deleteByPrimaryKey(reportID);
         if (i == 1) {
