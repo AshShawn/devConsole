@@ -92,7 +92,9 @@ public class TaskController {
             return Response.err("修改无效或者没有权限");
         }
         taskInfo.setTaskLevel(taskLevel);
-        taskInfo.setWorkerIDs(workerIDs);
+        if (!workerIDs.equalsIgnoreCase(taskInfo.getWorkerIDs()) && isLeader == 1) {  //workid有改动且为组长
+            taskInfo.setWorkerIDs(workerIDs);
+        }
         taskInfo.setTaskState(taskState);
         taskInfoMapper.updateByPrimaryKeySelective(taskInfo);
         return Response.SUCCESS;
